@@ -14,16 +14,7 @@ The ChatAFL artifact is configured within [ProfuzzBench](https://github.com/prof
 ```
 ChatAFL-Artifact
 ├── aflnet: a modified version of AFLNet which outputs states and state transitions 
-├── analyse.sh: analysis script 
-├── benchmark: a modified version of ProfuzzBench, containing only text-based protocols with the addition of Lighttpd 1.4 
-├── clean.sh: clean script
-├── ChatAFL: the source code of ChatAFL, with all strategies proposed in the paper
-├── ChatAFL-CL1: ChatAFL, which only uses the structure-aware mutations (c.f. Ablation study) 
-├── ChatAFL-CL2: ChatAFL, which only uses the structure-aware and initial seed enrichment (c.f. Ablation study)
-├── deps.sh: the script to install dependencies, asks for the password when executed
-├── README: this file
-├── run.sh: the execution script to run fuzzers on subjects and collect data
-└── setup.sh: the preparation script to set up docker images
+└── ChatAFL: the source code of ChatAFL, with all strategies proposed in the paper
 ```
 
 ## Citing ChatAFL
