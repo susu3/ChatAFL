@@ -73,14 +73,8 @@ char *chat_with_llm(char *prompt, char *model, int tries, float temperature)
     char *content_header = "Content-Type: application/json";
     char *accept_header = "Accept: application/json";
     char *data = NULL;
-    //if (strcmp(model, "instruct") == 0)
-    //{
-        asprintf(&data, "{\"model\": \"gpt-4o\", \"prompt\": %s, \"max_tokens\": %d, \"temperature\": %f}", prompt, MAX_TOKENS, temperature);
-    //}
-    //else
-    //{
-    //    asprintf(&data, "{\"model\": \"gpt-3.5-turbo\",\"messages\": %s, \"max_tokens\": %d, \"temperature\": %f}", prompt, MAX_TOKENS, temperature);
-    //}
+    // Use the correct OpenAI Chat Completions API format with messages
+    asprintf(&data, "{\"model\": \"gpt-4o\", \"messages\": [{\"role\": \"user\", \"content\": %s}], \"max_tokens\": %d, \"temperature\": %f}", prompt, MAX_TOKENS, temperature);
     curl_global_init(CURL_GLOBAL_DEFAULT);
     do
     {
@@ -116,18 +110,19 @@ char *chat_with_llm(char *prompt, char *model, int tries, float temperature)
                     json_object *first_choice = json_object_array_get_idx(choices, 0);
                     const char *data;
 
-                    // The answer begins with a newline character, so we remove it
-                    if (strcmp(model, "instruct") == 0)
-                    {
-                        json_object *jobj4 = json_object_object_get(first_choice, "text");
-                        data = json_object_get_string(jobj4);
+                    // Parse response from OpenAI Chat Completions API
+                    // The response format is: choices[0].message.content
+                    json_object *jobj4 = json_object_object_get(first_choice, "message");
+                    if (jobj4 == NULL) {
+                        fprintf(stderr, "Error: No 'message' field in response\n");
+                        continue;
                     }
-                    else
-                    {
-                        json_object *jobj4 = json_object_object_get(first_choice, "message");
-                        json_object *jobj5 = json_object_object_get(jobj4, "content");
-                        data = json_object_get_string(jobj5);
+                    json_object *jobj5 = json_object_object_get(jobj4, "content");
+                    if (jobj5 == NULL) {
+                        fprintf(stderr, "Error: No 'content' field in message\n");
+                        continue;
                     }
+                    data = json_object_get_string(jobj5);
                     if (data[0] == '\n')
                         data++;
                     answer = strdup(data);
