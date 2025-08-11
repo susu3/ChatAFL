@@ -73,8 +73,17 @@ char *chat_with_llm(char *prompt, char *model, int tries, float temperature)
     char *content_header = "Content-Type: application/json";
     char *accept_header = "Accept: application/json";
     char *data = NULL;
-    // Use the correct OpenAI Chat Completions API format with messages
-    asprintf(&data, "{\"model\": \"gpt-4o\", \"messages\": [{\"role\": \"user\", \"content\": %s}], \"max_tokens\": %d, \"temperature\": %f}", prompt, MAX_TOKENS, temperature);
+    // Check if prompt is already in JSON format (starts with '[')
+    if (prompt != NULL && prompt[0] == '[') {
+        // Prompt is already a JSON array of messages
+        asprintf(&data, "{\"model\": \"gpt-4o\", \"messages\": %s, \"max_tokens\": %d, \"temperature\": %f}", prompt, MAX_TOKENS, temperature);
+    } else {
+        // Prompt is a plain string, use JSON-C to properly escape it
+        json_object *prompt_obj = json_object_new_string(prompt);
+        const char *escaped_prompt = json_object_to_json_string(prompt_obj);
+        asprintf(&data, "{\"model\": \"gpt-4o\", \"messages\": [{\"role\": \"user\", \"content\": %s}], \"max_tokens\": %d, \"temperature\": %f}", escaped_prompt, MAX_TOKENS, temperature);
+        json_object_put(prompt_obj);
+    }
     curl_global_init(CURL_GLOBAL_DEFAULT);
     do
     {
