@@ -48,26 +48,26 @@ char *chat_with_llm(char *prompt, char *model, int tries, float temperature)
     CURLcode res = CURLE_OK;
     char *answer = NULL;
     char *url = NULL;
-    if (strcmp(model, "instruct") == 0)
-    {
-        url = "https://api.openai.com/v1/completions";
-    }
-    else
-    {
+    //if (strcmp(model, "instruct") == 0)
+    //{
         url = "https://api.openai.com/v1/chat/completions";
-    }
+    //}
+    //else
+    //{
+    //    url = "https://api.openai.com/v1/chat/completions";
+    //}
     char *auth_header = "Authorization: Bearer " OPENAI_TOKEN;
     char *content_header = "Content-Type: application/json";
     char *accept_header = "Accept: application/json";
     char *data = NULL;
-    if (strcmp(model, "instruct") == 0)
-    {
-        asprintf(&data, "{\"model\": \"gpt-3.5-turbo-instruct\", \"prompt\": \"%s\", \"max_tokens\": %d, \"temperature\": %f}", prompt, MAX_TOKENS, temperature);
-    }
-    else
-    {
-        asprintf(&data, "{\"model\": \"gpt-3.5-turbo\",\"messages\": %s, \"max_tokens\": %d, \"temperature\": %f}", prompt, MAX_TOKENS, temperature);
-    }
+    //if (strcmp(model, "instruct") == 0)
+    //{
+        asprintf(&data, "{\"model\": \"gpt-4o\", \"prompt\": %s, \"max_tokens\": %d, \"temperature\": %f}", prompt, MAX_TOKENS, temperature);
+    //}
+    //else
+    //{
+    //    asprintf(&data, "{\"model\": \"gpt-3.5-turbo\",\"messages\": %s, \"max_tokens\": %d, \"temperature\": %f}", prompt, MAX_TOKENS, temperature);
+    //}
     curl_global_init(CURL_GLOBAL_DEFAULT);
     do
     {

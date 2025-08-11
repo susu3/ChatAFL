@@ -9426,7 +9426,7 @@ static void usage(u8 *argv0)
        "Settings for network protocol fuzzing (AFLNet):\n\n"
 
        "  -N netinfo    - server information (e.g., tcp://127.0.0.1/8554)\n"
-       "  -P protocol   - application protocol to be tested (e.g., RTSP, FTP, DTLS12, DNS, SMTP, SSH, TLS)\n"
+       "  -P protocol   - application protocol to be tested (e.g., MODBUS, IEC104, ETHERNETIP, SLMPA, SLMPB, OPCUACP, DNP3, BACNETIP, MQTT)\n"
        "  -D usec       - waiting time (in micro seconds) for the server to initialize\n"
        "  -W msec       - waiting time (in miliseconds) for receiving the first response to each input sent\n"
        "  -w usec       - waiting time (in micro seconds) for receiving follow-up responses\n"
@@ -10467,60 +10467,50 @@ int main(int argc, char **argv)
       if (protocol_selected)
         FATAL("Multiple -P options not supported");
 
-      if (!strcmp(optarg, "RTSP"))
+      if (!strcmp(optarg, "MODBUS"))
       {
-        extract_requests = &extract_requests_rtsp;
-        extract_response_codes = &extract_response_codes_rtsp;
+        extract_requests = &extract_requests_modbus;
+        extract_response_codes = &extract_response_codes_modbus;
       }
-      else if (!strcmp(optarg, "FTP"))
+      else if (!strcmp(optarg, "IEC104"))
       {
-        extract_requests = &extract_requests_ftp;
-        extract_response_codes = &extract_response_codes_ftp;
+        extract_requests = &extract_requests_iec104;
+        extract_response_codes = &extract_response_codes_iec104;
       }
-      else if (!strcmp(optarg, "DTLS12"))
+      else if (!strcmp(optarg, "ETHERNETIP"))
       {
-        extract_requests = &extract_requests_dtls12;
-        extract_response_codes = &extract_response_codes_dtls12;
+        extract_requests = &extract_requests_ethernetip;
+        extract_response_codes = &extract_response_codes_ethernetip;
       }
-      else if (!strcmp(optarg, "DNS"))
+      else if (!strcmp(optarg, "SLMPA"))
       {
-        extract_requests = &extract_requests_dns;
-        extract_response_codes = &extract_response_codes_dns;
+        extract_requests = &extract_requests_slmpa;
+        extract_response_codes = &extract_response_codes_slmpa;
       }
-      else if (!strcmp(optarg, "DICOM"))
+      else if (!strcmp(optarg, "SLMPB"))
       {
-        extract_requests = &extract_requests_dicom;
-        extract_response_codes = &extract_response_codes_dicom;
+        extract_requests = &extract_requests_slmpb;
+        extract_response_codes = &extract_response_codes_slmpb;
       }
-      else if (!strcmp(optarg, "SMTP"))
+      else if (!strcmp(optarg, "OPCUACP"))
       {
-        extract_requests = &extract_requests_smtp;
-        extract_response_codes = &extract_response_codes_smtp;
+        extract_requests = &extract_requests_opcuacp;
+        extract_response_codes = &extract_response_codes_opcuacp;
       }
-      else if (!strcmp(optarg, "SSH"))
+      else if (!strcmp(optarg, "DNP3"))
       {
-        extract_requests = &extract_requests_ssh;
-        extract_response_codes = &extract_response_codes_ssh;
+        extract_requests = &extract_requests_dnp3;
+        extract_response_codes = &extract_response_codes_dnp3;
       }
-      else if (!strcmp(optarg, "TLS"))
+      else if (!strcmp(optarg, "BACNETIP"))
       {
-        extract_requests = &extract_requests_tls;
-        extract_response_codes = &extract_response_codes_tls;
+        extract_requests = &extract_requests_bacnetip;
+        extract_response_codes = &extract_response_codes_bacnetip;
       }
-      else if (!strcmp(optarg, "SIP"))
+      else if (!strcmp(optarg, "MQTT"))
       {
-        extract_requests = &extract_requests_sip;
-        extract_response_codes = &extract_response_codes_sip;
-      }
-      else if (!strcmp(optarg, "HTTP"))
-      {
-        extract_requests = &extract_requests_http;
-        extract_response_codes = &extract_response_codes_http;
-      }
-      else if (!strcmp(optarg, "IPP"))
-      {
-        extract_requests = &extract_requests_ipp;
-        extract_response_codes = &extract_response_codes_ipp;
+        extract_requests = &extract_requests_mqtt;
+        extract_response_codes = &extract_response_codes_mqtt;
       }
       else
       {
