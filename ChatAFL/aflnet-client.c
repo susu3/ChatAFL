@@ -53,60 +53,50 @@ int main(int argc, char *argv[])
   fread(buf, length, 1, fp);
   fclose(fp);
 
-  if (!strcmp(argv[2], "RTSP"))
+  if (!strcmp(argv[2], "MODBUS"))
   {
-    extract_response_codes = &extract_response_codes_rtsp;
-    extract_requests = &extract_requests_rtsp;
+    extract_response_codes = &extract_response_codes_modbus;
+    extract_requests = &extract_requests_modbus;
   }
-  else if (!strcmp(argv[2], "FTP"))
+  else if (!strcmp(argv[2], "IEC104"))
   {
-    extract_response_codes = &extract_response_codes_ftp;
-    extract_requests = &extract_requests_ftp;
+    extract_response_codes = &extract_response_codes_iec104;
+    extract_requests = &extract_requests_iec104;
   }
-  else if (!strcmp(argv[2], "DNS"))
+  else if (!strcmp(argv[2], "ETHERNETIP"))
   {
-    extract_response_codes = &extract_response_codes_dns;
-    extract_requests = &extract_requests_dns;
+    extract_response_codes = &extract_response_codes_ethernetip;
+    extract_requests = &extract_requests_ethernetip;
   }
-  else if (!strcmp(argv[2], "DTLS12"))
+  else if (!strcmp(argv[2], "SLMPA"))
   {
-    extract_response_codes = &extract_response_codes_dtls12;
-    extract_requests = &extract_requests_dtls12;
+    extract_response_codes = &extract_response_codes_slmpa;
+    extract_requests = &extract_requests_slmpa;
   }
-  else if (!strcmp(argv[2], "DICOM"))
+  else if (!strcmp(argv[2], "SLMPB"))
   {
-    extract_response_codes = &extract_response_codes_dicom;
-    extract_requests = &extract_requests_dicom;
+    extract_response_codes = &extract_response_codes_slmpb;
+    extract_requests = &extract_requests_slmpb;
   }
-  else if (!strcmp(argv[2], "SMTP"))
+  else if (!strcmp(argv[2], "DNP3"))
   {
-    extract_response_codes = &extract_response_codes_smtp;
-    extract_requests = &extract_requests_smtp;
+    extract_response_codes = &extract_response_codes_dnp3;
+    extract_requests = &extract_requests_dnp3;
   }
-  else if (!strcmp(argv[2], "SSH"))
+  else if (!strcmp(argv[2], "BACNETIP"))
   {
-    extract_response_codes = &extract_response_codes_ssh;
-    extract_requests = &extract_requests_ssh;
+    extract_response_codes = &extract_response_codes_bacnetip;
+    extract_requests = &extract_requests_bacnetip;
   }
-  else if (!strcmp(argv[2], "TLS"))
+  else if (!strcmp(argv[2], "MQTT"))
   {
-    extract_response_codes = &extract_response_codes_tls;
-    extract_requests = &extract_requests_tls;
+    extract_response_codes = &extract_response_codes_mqtt;
+    extract_requests = &extract_requests_mqtt;
   }
-  else if (!strcmp(argv[2], "SIP"))
+  else if (!strcmp(argv[2], "OPCUACP"))
   {
-    extract_response_codes = &extract_response_codes_sip;
-    extract_requests = &extract_requests_sip;
-  }
-  else if (!strcmp(argv[2], "HTTP"))
-  {
-    extract_response_codes = &extract_response_codes_http;
-    extract_requests = &extract_requests_http;
-  }
-  else if (!strcmp(argv[2], "IPP"))
-  {
-    extract_response_codes = &extract_response_codes_ipp;
-    extract_requests = &extract_requests_ipp;
+    extract_response_codes = &extract_response_codes_opcuacp;
+    extract_requests = &extract_requests_opcuacp;
   }
   else
   {
