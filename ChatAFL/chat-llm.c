@@ -16,19 +16,43 @@
 #define MAX_TOKENS 2048
 #define CONFIDENT_TIMES 3
 
-// Function to get OpenAI token from environment variable
+// Static variables for token caching
+static char* cached_token = NULL;
+static int token_initialized = 0;
+
+// Function to get OpenAI token from environment variable (safe version)
 char* get_openai_token(void) {
-    static int warned = 0;
-    char* token = getenv("OPENAI_API_KEY");
-    if (token == NULL) {
-        if (!warned) {
-            fprintf(stderr, "Warning: OPENAI_API_KEY environment variable not set! LLM features will be disabled.\n");
-            warned = 1;
+    if (!token_initialized) {
+        char* env_token = getenv("OPENAI_API_KEY");
+        if (env_token != NULL && strlen(env_token) > 0) {
+            // Create a copy of the token to avoid issues with environment changes
+            cached_token = malloc(strlen(env_token) + 1);
+            if (cached_token != NULL) {
+                strcpy(cached_token, env_token);
+            } else {
+                fprintf(stderr, "Error: Failed to allocate memory for API key\n");
+                exit(1);
+            }
+        } else {
+            fprintf(stderr, "Error: OPENAI_API_KEY environment variable not set or empty!\n");
+            fprintf(stderr, "Please set it with: export OPENAI_API_KEY=\"your_api_key_here\"\n");
+            exit(1);
         }
-        return "dummy_token_llm_disabled";
+        token_initialized = 1;
     }
-    return token;
+    
+    return cached_token;
 }
+
+// Function to cleanup allocated token memory
+void cleanup_openai_token(void) {
+    if (cached_token != NULL) {
+        free(cached_token);
+        cached_token = NULL;
+        token_initialized = 0;
+    }
+}
+
 
 struct MemoryStruct
 {
@@ -72,13 +96,11 @@ char *chat_with_llm(char *prompt, char *model, int tries, float temperature)
     //}
     // Dynamically construct auth header with token from environment variable
     char *token = get_openai_token();
-    
-    // If LLM is disabled (no API key), return NULL immediately
-    if (strcmp(token, "dummy_token_llm_disabled") == 0) {
+    char *auth_header = NULL;
+    if (asprintf(&auth_header, "Authorization: Bearer %s", token) == -1) {
+        fprintf(stderr, "Error: Failed to allocate memory for auth header\n");
         return NULL;
     }
-    char *auth_header = NULL;
-    asprintf(&auth_header, "Authorization: Bearer %s", token);
     char *content_header = "Content-Type: application/json";
     char *accept_header = "Accept: application/json";
     char *data = NULL;
