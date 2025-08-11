@@ -16,6 +16,16 @@
 #define MAX_TOKENS 2048
 #define CONFIDENT_TIMES 3
 
+// Function to get OpenAI token from environment variable
+char* get_openai_token(void) {
+    char* token = getenv("OPENAI_API_KEY");
+    if (token == NULL) {
+        fprintf(stderr, "Error: OPENAI_API_KEY environment variable not set!\n");
+        exit(1);
+    }
+    return token;
+}
+
 struct MemoryStruct
 {
     char *memory;
@@ -56,7 +66,10 @@ char *chat_with_llm(char *prompt, char *model, int tries, float temperature)
     //{
     //    url = "https://api.openai.com/v1/chat/completions";
     //}
-    char *auth_header = "Authorization: Bearer " OPENAI_TOKEN;
+    // Dynamically construct auth header with token from environment variable
+    char *token = get_openai_token();
+    char *auth_header = NULL;
+    asprintf(&auth_header, "Authorization: Bearer %s", token);
     char *content_header = "Content-Type: application/json";
     char *accept_header = "Accept: application/json";
     char *data = NULL;
@@ -141,6 +154,11 @@ char *chat_with_llm(char *prompt, char *model, int tries, float temperature)
     if (data != NULL)
     {
         free(data);
+    }
+    
+    if (auth_header != NULL)
+    {
+        free(auth_header);
     }
 
     curl_global_cleanup();

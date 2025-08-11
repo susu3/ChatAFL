@@ -12,7 +12,8 @@ We give at most 400 for the examples and 1300 for the stall prompt
 Similarly 1700 is for the example request in the seed enrichment
 */
 
-#define OPENAI_TOKEN "1"
+// OPENAI_TOKEN is now dynamically obtained from environment variable OPENAI_API_KEY
+char* get_openai_token(void);
 
 #define MAX_PROMPT_LENGTH 2048
 #define EXAMPLES_PROMPT_LENGTH 400
