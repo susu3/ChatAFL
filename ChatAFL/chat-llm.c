@@ -18,10 +18,14 @@
 
 // Function to get OpenAI token from environment variable
 char* get_openai_token(void) {
+    static int warned = 0;
     char* token = getenv("OPENAI_API_KEY");
     if (token == NULL) {
-        fprintf(stderr, "Error: OPENAI_API_KEY environment variable not set!\n");
-        exit(1);
+        if (!warned) {
+            fprintf(stderr, "Warning: OPENAI_API_KEY environment variable not set! LLM features will be disabled.\n");
+            warned = 1;
+        }
+        return "dummy_token_llm_disabled";
     }
     return token;
 }
@@ -68,6 +72,11 @@ char *chat_with_llm(char *prompt, char *model, int tries, float temperature)
     //}
     // Dynamically construct auth header with token from environment variable
     char *token = get_openai_token();
+    
+    // If LLM is disabled (no API key), return NULL immediately
+    if (strcmp(token, "dummy_token_llm_disabled") == 0) {
+        return NULL;
+    }
     char *auth_header = NULL;
     asprintf(&auth_header, "Authorization: Bearer %s", token);
     char *content_header = "Content-Type: application/json";
