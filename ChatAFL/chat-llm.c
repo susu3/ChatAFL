@@ -23,7 +23,7 @@ static int token_initialized = 0;
 // Function to get OpenAI token from environment variable (safe version)
 char* get_openai_token(void) {
     if (!token_initialized) {
-        char* env_token = getenv("OPENAI_API_KEY");
+        char* env_token = getenv("LLM_API_KEY");
         if (env_token != NULL && strlen(env_token) > 0) {
             // Create a copy of the token to avoid issues with environment changes
             cached_token = malloc(strlen(env_token) + 1);
@@ -34,8 +34,8 @@ char* get_openai_token(void) {
                 exit(1);
             }
         } else {
-            fprintf(stderr, "Error: OPENAI_API_KEY environment variable not set or empty!\n");
-            fprintf(stderr, "Please set it with: export OPENAI_API_KEY=\"your_api_key_here\"\n");
+            fprintf(stderr, "Error: LLM_API_KEY environment variable not set or empty!\n");
+            fprintf(stderr, "Please set it with: export LLM_API_KEY=\"your_api_key_here\"\n");
             exit(1);
         }
         token_initialized = 1;
@@ -88,7 +88,8 @@ char *chat_with_llm(char *prompt, char *model, int tries, float temperature)
     char *url = NULL;
     //if (strcmp(model, "instruct") == 0)
     //{
-        url = "https://api.openai.com/v1/chat/completions";
+        //url = "https://api.openai.com/v1/chat/completions";
+        url = "https://openrouter.ai/api/v1/chat/completions";
     //}
     //else
     //{
@@ -107,12 +108,12 @@ char *chat_with_llm(char *prompt, char *model, int tries, float temperature)
     // Check if prompt is already in JSON format (starts with '[')
     if (prompt != NULL && prompt[0] == '[') {
         // Prompt is already a JSON array of messages
-        asprintf(&data, "{\"model\": \"gpt-4o\", \"messages\": %s, \"max_tokens\": %d, \"temperature\": %f}", prompt, MAX_TOKENS, temperature);
+        asprintf(&data, "{\"model\": \"google/gemini-2.5-pro\", \"messages\": %s, \"max_tokens\": %d, \"temperature\": %f}", prompt, MAX_TOKENS, temperature);
     } else {
         // Prompt is a plain string, use JSON-C to properly escape it
         json_object *prompt_obj = json_object_new_string(prompt);
         const char *escaped_prompt = json_object_to_json_string(prompt_obj);
-        asprintf(&data, "{\"model\": \"gpt-4o\", \"messages\": [{\"role\": \"user\", \"content\": %s}], \"max_tokens\": %d, \"temperature\": %f}", escaped_prompt, MAX_TOKENS, temperature);
+        asprintf(&data, "{\"model\": \"google/gemini-2.5-pro\", \"messages\": [{\"role\": \"user\", \"content\": %s}], \"max_tokens\": %d, \"temperature\": %f}", escaped_prompt, MAX_TOKENS, temperature);
         json_object_put(prompt_obj);
     }
     curl_global_init(CURL_GLOBAL_DEFAULT);
