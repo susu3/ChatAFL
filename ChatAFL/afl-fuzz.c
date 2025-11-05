@@ -475,6 +475,19 @@ void setup_llm_grammars()
     {
       json_object *jobj = kl_val(iter);
 
+      // Validate that jobj is actually a JSON array before accessing it
+      if (!jobj || json_object_get_type(jobj) != json_type_array) {
+        WARNF("Skipping non-array JSON object in grammar list");
+        continue;
+      }
+
+      // Check if array is not empty
+      int array_len = json_object_array_length(jobj);
+      if (array_len == 0) {
+        WARNF("Skipping empty JSON array in grammar list");
+        continue;
+      }
+
       json_object *header = json_object_array_get_idx(jobj, 0);
 
       int absent;

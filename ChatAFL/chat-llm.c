@@ -452,9 +452,16 @@ void extract_message_grammars(char *answers, klist_t(gram) * grammar_list)
 
         // conver temp to json object and save it to the list
         json_object *jobj = json_tokener_parse(temp);
-        *kl_pushp(gram, grammar_list) = jobj;
-
-        // printf("%s\n", temp);
+        
+        // Only add valid JSON objects to the list
+        if (jobj != NULL) {
+            *kl_pushp(gram, grammar_list) = jobj;
+            // printf("Extracted grammar: %s\n", temp);
+        } else {
+            // printf("Failed to parse JSON: %s\n", temp);
+        }
+        
+        ck_free(temp);
     }
 }
 
